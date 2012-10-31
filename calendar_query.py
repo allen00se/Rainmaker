@@ -39,7 +39,7 @@ gmail_user=parser.get('Email_Config','username')
 gmail_pass=parser.get('Email_Config','password')
 gmail_port=parser.get('Email_Config','port')
 gmail_host=parser.get('Email_Config','host')
-
+calendar_ID=parser.get('Calendar_Config','calendar_ID')
 
 logging.info('Connecting to %s database, with %s @ %s at IP: %s',db_database,db_user,db_pass,ip_address)
 
@@ -52,7 +52,7 @@ calendar_service.ProgrammaticLogin()
 def DateRangeQuery(calendar_service, start_date='2007-01-01', end_date='2007-07-01'):
   logging.info('Date range query for events on Primary Calendar: %s to %s',start_date, end_date)
   logging.info('Downloading Google Calendar Feed from %s using password %s',calendar_service.email,calendar_service.password)
-  query = gdata.calendar.service.CalendarEventQuery('t95e41gvdfnkh4268fumg3pnsc@group.calendar.google.com', 'private', 'full')
+  query = gdata.calendar.service.CalendarEventQuery(calendar_ID, 'private', 'full')
   query.start_min = start_date
   query.start_max = end_date
   logging.info('Querying feed for specified date range of %s to %s',query.start_min,query.start_max)
