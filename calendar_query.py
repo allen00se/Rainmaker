@@ -14,6 +14,7 @@ import time
 import MySQLdb
 import datetime
 import smtplib
+import MySQLdb.cursors
 
 from ConfigParser import SafeConfigParser
 import logging
@@ -49,6 +50,30 @@ calendar_service.password = gmail_pass
 calendar_service.source = 'Google-Calendar_Python_Sample-1.0'
 calendar_service.ProgrammaticLogin()
 
+def DatabaseQuery(ip_address,db_user,db_pass,db_database):
+	conn = MySQLdb.Connect(ip_address,db_user,db_pass,db_database) #,compress=1,
+	#cursorclass=MySQLdb.cursors.DictCursor) # <- important
+	cursor = conn.cursor(cursorclass=MySQLdb.cursors.DictCursor)
+	#cursor = conn.cursor()
+	cursor.execute("SELECT name, sometext txt FROM foo")
+	rows = cursor.fetchall()
+	cursor.close()
+	conn.close()
+
+	for row in rows:
+		print row['name'], row['txt'] # bingo!
+
+# another (even better) way is:
+
+#conn = MySQLdb.Connect(
+#    host='localhost', user='root',
+#    passwd='', db='test',compress=1)
+#cursor = conn.cursor(cursorclass=MySQLdb.cursors.DictCursor)
+# ...
+# results by field name
+#cursor = conn.cursor()
+
+
 def DateRangeQuery(calendar_service, start_date='2007-01-01', end_date='2007-07-01'):
   logging.info('Date range query for events on Primary Calendar: %s to %s',start_date, end_date)
   logging.info('Downloading Google Calendar Feed from %s using password %s',calendar_service.email,calendar_service.password)
@@ -69,7 +94,7 @@ def DateRangeQuery(calendar_service, start_date='2007-01-01', end_date='2007-07-
     logging.info('Event %s found for writing is %s',i, an_event.title.text)
     for a_when in an_event.when:
       #Write to DB
-      sqlinsert = "INSERT INTO %s(String_Time, Month, Day, Year, Start_Time, End_Time) VALUES ('%s', '%s', '%s', '%s', '%s', '%s' )" % (an_event.title.text, a_when.start_time, a_when.start_time[5:7], a_when.start_time[8:10], a_when.start_time[:4], a_when.start_time[11:19], a_when.end_time[11:19])
+      sqlinsert = "INSERT INTO %s(String_Time, Month, Day, Year, Start_Time, End_Time, Processed) VALUES ('%s', '%s', '%s', '%s', '%s', '%s', 'no' )" % (an_event.title.text, a_when.start_time, a_when.start_time[5:7], a_when.start_time[8:10], a_when.start_time[:4], a_when.start_time[11:19], a_when.end_time[11:19])
       logging.info('SQL insert string is: %s',sqlinsert)
       try:
         cursor.execute(sqlinsert)
