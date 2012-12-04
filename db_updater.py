@@ -105,10 +105,18 @@ class DBUpdateThread(threading.Thread):
 		http = credentials.authorize(http)
 		service = build('calendar', 'v3', http=http)
 
+
+		logging.debug('Opening DB for write') # Open database connection
+		db = MySQLdb.connect(ip_address,db_user,db_pass,db_database)
+		logging.debug('DB open for write')
+		cursor = db.cursor() # prepare a cursor object using cursor() method
+		logging.debug('Enumerating Results for database write')
+
 		try:
 			events = service.events().list(calendarId=self.calendar_id,maxResults=1000,orderBy='startTime',showDeleted='True',singleEvents='True',timeMax=self.end_date,timeMin=self.start_date).execute()
 			while True:
 				for event in events['items']:
+					Write_DB(cursor,event['summary'],event['id'],event['start']['dateTime'],event['end']['dateTime'])
 					#print 'found start time %s' % event['end.dateTime']
 					try:
 						if event['status'] == 'confirmed':
@@ -139,6 +147,36 @@ class DBUpdateThread(threading.Thread):
 
 		#Update_DB(self.calendar_service,self.start_date,self.end_date)
 		print '! Finished Database Update'
+
+
+def Write_DB(cursor,event_summary,event_id,start_time,end_time):
+	logging.info('Event %s found for writing is %s',i, event_summary)
+	#Write to DB
+	sqlinsert = "INSERT INTO %s(Event_ID, Start_Time, End_Time, Processed) VALUES ('%s', '%s', '%s', 'no' )" % (event_summary, event_id, start_time, end_time)
+	logging.info('SQL insert string is: %s',sqlinsert)
+	try:
+		cursor.execute(sqlinsert)
+		db.commit()
+		logging.info('Wrote values to %s table: %s/%s/%s',event_summary, event_id, start_time, end_time)
+		#except:
+			#print '\t\tCouldnt write to DB'
+		except MySQLdb.Error, e:
+			if e.args[0]==1062:
+				logging.warning('Error %d: %s',e.args[0], e.args[1])
+				logging.debug('Record already exists, updating existing record!')
+				sqlupdate = "UPDATE %s SET Start_Time = '%s', End_Time = '%s' WHERE Event_ID = '%s'" % (event_summary, start_time, end_time, event_id)
+				logging.info('Updating record with SQL command: %s',sqlupdate)
+				cursor.execute(sqlupdate)
+				db.commit()
+				logging.info('Updated %s record with key: %s',event_summary,event_id)
+			else:
+				logging.warning('Could not write %s to %s' % (event_id, event_summary))
+				#print 'Unknown Error'
+				db.rollback()
+	logging.debug('Closing DB Connection')
+	db.close()
+	logging.debug('DB connection Closed')
+
 
 
 hour = time.strftime('%X')[:2]
