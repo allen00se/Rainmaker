@@ -160,19 +160,19 @@ def Write_DB(cursor,event_summary,event_id,start_time,end_time):
 		logging.info('Wrote values to %s table: %s/%s/%s',event_summary, event_id, start_time, end_time)
 		#except:
 			#print '\t\tCouldnt write to DB'
-		except MySQLdb.Error, e:
-			if e.args[0]==1062:
-				logging.warning('Error %d: %s',e.args[0], e.args[1])
-				logging.debug('Record already exists, updating existing record!')
-				sqlupdate = "UPDATE %s SET Start_Time = '%s', End_Time = '%s' WHERE Event_ID = '%s'" % (event_summary, start_time, end_time, event_id)
-				logging.info('Updating record with SQL command: %s',sqlupdate)
-				cursor.execute(sqlupdate)
-				db.commit()
-				logging.info('Updated %s record with key: %s',event_summary,event_id)
-			else:
-				logging.warning('Could not write %s to %s' % (event_id, event_summary))
-				#print 'Unknown Error'
-				db.rollback()
+	except MySQLdb.Error, e:
+		if e.args[0]==1062:
+			logging.warning('Error %d: %s',e.args[0], e.args[1])
+			logging.debug('Record already exists, updating existing record!')
+			sqlupdate = "UPDATE %s SET Start_Time = '%s', End_Time = '%s' WHERE Event_ID = '%s'" % (event_summary, start_time, end_time, event_id)
+			logging.info('Updating record with SQL command: %s',sqlupdate)
+			cursor.execute(sqlupdate)
+			db.commit()
+			logging.info('Updated %s record with key: %s',event_summary,event_id)
+		else:
+			logging.warning('Could not write %s to %s' % (event_id, event_summary))
+			#print 'Unknown Error'
+			db.rollback()
 	logging.debug('Closing DB Connection')
 	db.close()
 	logging.debug('DB connection Closed')
