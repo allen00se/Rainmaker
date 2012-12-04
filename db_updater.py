@@ -27,12 +27,12 @@ from oauth2client.file import Storage
 from oauth2client.client import AccessTokenRefreshError
 from oauth2client.client import OAuth2WebServerFlow
 from oauth2client.tools import run
-from termcolor import colored
+
 
 #============= Log File name and Format
 today = datetime.date.today()
 logfile='Rain_Maker%s.log' % (today)
-print colored('hello', 'red'), colored('world', 'green')
+
 time.sleep(10)
 logging.basicConfig(format='%(asctime)s %(message)s',filename=logfile,filemode='w',level=logging.DEBUG)
 
@@ -113,10 +113,10 @@ class DBUpdateThread(threading.Thread):
 					try:
 						if event['status'] == 'confirmed':
 							#confirmed_list.append(event['status'] + event['summary'] + event['id'])
-							print '> CONFIRMED Event %s with ID (%s) | Start Time = %s, End Time = %s' % (event['summary'],event['id'],event['start']['dateTime'],event['end']['dateTime'])
+							print '>>>>> CONFIRMED Event %s with ID (%s) | Start Time = %s, End Time = %s' % (event['summary'],event['id'],event['start']['dateTime'],event['end']['dateTime'])
 						if event['status'] == 'cancelled':
 							#cancelled_list.append(event['status'] + event['summary'] + event['id'])
-							print '! CANCELLED Event %s with ID (%s) | Start Time = %s, End Time = %s' % (event['summary'],event['id'],event['start']['dateTime'],event['end']['dateTime'])
+							print '!     CANCELLED Event %s with ID (%s) | Start Time = %s, End Time = %s' % (event['summary'],event['id'],event['start']['dateTime'],event['end']['dateTime'])
 						#print '%s - %s - %s - %s - %s' %(event['status'],event['summary'],event['start.timeZone'],event['end'],event['id'])
 						#print event
 					except KeyError:
