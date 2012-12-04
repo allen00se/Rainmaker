@@ -41,6 +41,7 @@ local.properties
 *.user
 *.sln.docstates
 
+
 # Build results
 [Dd]ebug/
 [Rr]elease/
@@ -127,6 +128,7 @@ Thumbs.db
 Desktop.ini
 *.log
 irrigation.ini
+*.dat
 
 #############
 ## Python

@@ -79,11 +79,9 @@ def clean_db(tablename):
 			pkey = row[0]
 			L.append(row[0]+tablename)
 	except: print "Error: unable to fecth data"
-	# disconnect from server
 
-	#print L[2]
 	print len(L)
-
+	calendar_list=DateRangeQuery(calendar_service,'2012-10-01','2012-12-30')
 	for item in L:
 		#check item against each event
 		source = item
@@ -108,12 +106,12 @@ def clean_db(tablename):
 				db.rollback()
 
 
-calendar_list=DateRangeQuery(calendar_service,'2012-10-01','2012-12-30');
+
 db = MySQLdb.connect("192.168.1.133","testuser","test123","TESTDB" )
 # prepare a cursor object using cursor() method
 cursor = db.cursor()
-
 cursor.execute('SHOW TABLES;')
+
 table_list=[]
 for (table_name,) in cursor:
 	table_list.append(table_name)
