@@ -27,11 +27,13 @@ from oauth2client.file import Storage
 from oauth2client.client import AccessTokenRefreshError
 from oauth2client.client import OAuth2WebServerFlow
 from oauth2client.tools import run
-
+from termcolor import colored
 
 #============= Log File name and Format
 today = datetime.date.today()
 logfile='Rain_Maker%s.log' % (today)
+print colored('hello', 'red'), colored('world', 'green')
+time.sleep(10)
 logging.basicConfig(format='%(asctime)s %(message)s',filename=logfile,filemode='w',level=logging.DEBUG)
 
 logging.debug('.....')
