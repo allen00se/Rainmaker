@@ -150,7 +150,7 @@ class DBUpdateThread(threading.Thread):
 
 
 def Write_DB(cursor,event_summary,event_id,start_time,end_time):
-	logging.info('Event %s found for writing is %s',i, event_summary)
+	logging.info('Found event %s for writing', event_summary)
 	#Write to DB
 	sqlinsert = "INSERT INTO %s(Event_ID, Start_Time, End_Time, Processed) VALUES ('%s', '%s', '%s', 'no' )" % (event_summary, event_id, start_time, end_time)
 	logging.info('SQL insert string is: %s',sqlinsert)
