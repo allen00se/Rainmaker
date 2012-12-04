@@ -116,7 +116,7 @@ class DBUpdateThread(threading.Thread):
 			events = service.events().list(calendarId=self.calendar_id,maxResults=1000,orderBy='startTime',showDeleted='True',singleEvents='True',timeMax=self.end_date,timeMin=self.start_date).execute()
 			while True:
 				for event in events['items']:
-					Write_DB(db,cursor,event['summary'],event['id'],event['start']['dateTime'],event['end']['dateTime'])
+					Write_DB(db,cursor,event['summary'],event['id'],event['start']['dateTime'],event['end']['dateTime'],event['status'])
 					#print 'found start time %s' % event['end.dateTime']
 					try:
 						if event['status'] == 'confirmed':
@@ -152,22 +152,22 @@ class DBUpdateThread(threading.Thread):
 		print '! Finished Database Update'
 
 
-def Write_DB(db,cursor,event_summary,event_id,start_time,end_time):
+def Write_DB(db,cursor,event_summary,event_id,start_time,end_time,status):
 	logging.info('Found event %s for writing', event_summary)
 	#Write to DB
-	sqlinsert = "INSERT INTO %s(Event_ID, Start_Time, End_Time, Processed) VALUES ('%s', '%s', '%s', 'no' )" % (event_summary, event_id, start_time, end_time)
+	sqlinsert = "INSERT INTO %s(Event_ID, Start_Time, End_Time, Processed,Status) VALUES ('%s', '%s', '%s', 'no', '%s' )" % (event_summary, event_id, start_time, end_time, status)
 	logging.info('SQL insert string is: %s',sqlinsert)
 	try:
 		cursor.execute(sqlinsert)
 		db.commit()
-		logging.info('Wrote values to %s table: %s/%s/%s',event_summary, event_id, start_time, end_time)
+		logging.info('Wrote values to %s table: %s/%s/%s/%s',event_summary, event_id, start_time, end_time, status)
 		#except:
 			#print '\t\tCouldnt write to DB'
 	except MySQLdb.Error, e:
 		if e.args[0]==1062:
 			logging.warning('Error %d: %s',e.args[0], e.args[1])
 			logging.debug('Record already exists, updating existing record!')
-			sqlupdate = "UPDATE %s SET Start_Time = '%s', End_Time = '%s' WHERE Event_ID = '%s'" % (event_summary, start_time, end_time, event_id)
+			sqlupdate = "UPDATE %s SET Start_Time = '%s', End_Time = '%s', Status = '%s' WHERE Event_ID = '%s'" % (event_summary, start_time, end_time,status, event_id)
 			logging.info('Updating record with SQL command: %s',sqlupdate)
 			cursor.execute(sqlupdate)
 			db.commit()
