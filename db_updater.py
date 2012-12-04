@@ -146,6 +146,9 @@ class DBUpdateThread(threading.Thread):
 
 
 		#Update_DB(self.calendar_service,self.start_date,self.end_date)
+		logging.debug('Closing DB Connection')
+		db.close()
+		logging.debug('DB connection Closed')
 		print '! Finished Database Update'
 
 
@@ -173,9 +176,7 @@ def Write_DB(db,cursor,event_summary,event_id,start_time,end_time):
 			logging.warning('Could not write %s to %s' % (event_id, event_summary))
 			#print 'Unknown Error'
 			db.rollback()
-	logging.debug('Closing DB Connection')
-	db.close()
-	logging.debug('DB connection Closed')
+
 
 
 
