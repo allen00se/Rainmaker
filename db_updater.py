@@ -116,7 +116,7 @@ class DBUpdateThread(threading.Thread):
 			events = service.events().list(calendarId=self.calendar_id,maxResults=1000,orderBy='startTime',showDeleted='True',singleEvents='True',timeMax=self.end_date,timeMin=self.start_date).execute()
 			while True:
 				for event in events['items']:
-					Write_DB(cursor,event['summary'],event['id'],event['start']['dateTime'],event['end']['dateTime'])
+					Write_DB(db,cursor,event['summary'],event['id'],event['start']['dateTime'],event['end']['dateTime'])
 					#print 'found start time %s' % event['end.dateTime']
 					try:
 						if event['status'] == 'confirmed':
@@ -149,7 +149,7 @@ class DBUpdateThread(threading.Thread):
 		print '! Finished Database Update'
 
 
-def Write_DB(cursor,event_summary,event_id,start_time,end_time):
+def Write_DB(db,cursor,event_summary,event_id,start_time,end_time):
 	logging.info('Found event %s for writing', event_summary)
 	#Write to DB
 	sqlinsert = "INSERT INTO %s(Event_ID, Start_Time, End_Time, Processed) VALUES ('%s', '%s', '%s', 'no' )" % (event_summary, event_id, start_time, end_time)
