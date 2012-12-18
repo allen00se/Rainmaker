@@ -151,11 +151,10 @@ class DBUpdateThread(threading.Thread):
 		logging.debug('DB connection Closed')
 		print '! Finished Database Update'
 
-
 def Write_DB(db,cursor,event_summary,event_id,start_time,end_time,status):
 	logging.info('Found event %s for writing', event_summary)
 	#Write to DB
-	sqlinsert = "INSERT INTO %s(Event_ID, Start_Time, End_Time, Processed,Status) VALUES ('%s', '%s', '%s', 'no', '%s' )" % (event_summary, event_id, start_time, end_time, status)
+	sqlinsert = "INSERT INTO Irrigation(Event_ID, Area, Start_Time, End_Time, Processed,Status) VALUES ('%s','%s', '%s', '%s', 'no', '%s' )" % (event_id, event_summary, start_time, end_time, status)
 	logging.info('SQL insert string is: %s',sqlinsert)
 	try:
 		cursor.execute(sqlinsert)
@@ -165,7 +164,7 @@ def Write_DB(db,cursor,event_summary,event_id,start_time,end_time,status):
 			#print '\t\tCouldnt write to DB'
 	except MySQLdb.Error, e:
 		if e.args[0]==1062:
-			logging.warning('Error %d: %s',e.args[0], e.args[1])
+			logging.warning('Warning %d: %s',e.args[0], e.args[1])
 			logging.debug('Record already exists, updating existing record!')
 			sqlupdate = "UPDATE %s SET Start_Time = '%s', End_Time = '%s', Status = '%s' WHERE Event_ID = '%s'" % (event_summary, start_time, end_time,status, event_id)
 			logging.info('Updating record with SQL command: %s',sqlupdate)
@@ -177,7 +176,42 @@ def Write_DB(db,cursor,event_summary,event_id,start_time,end_time,status):
 			#print 'Unknown Error'
 			db.rollback()
 
+def clean_db(tablename,cursor,db):
+	sql = 'SELECT * FROM CANCELLED WHERE Processed != "yes"'
+	try:
+		# Execute the SQL command
+		cursor.execute(sql)
+		# Fetch all the rows in a list of lists.
+		results = cursor.fetchall()
+		L=[]
+		for row in results:
+			pkey = row[0]
+			L.append(row[0]+tablename)
 
+		print len(L)
+		###calendar_list=DateRangeQuery(calendar_service,'2012-10-01','2012-12-30')
+		for item in L:
+			#check item against each event
+			source = item
+			signal=0
+			for item in calendar_list:
+				if item == source:
+					signal=signal+1
+					print 'matched %s and %s' % (source,item)
+			if signal < 1:
+				primary_key=source.replace(tablename,"");
+				print '%s was not matched %s' % (primary_key,signal)
+				sql_delete = "DELETE FROM %s WHERE String_Time = '%s'" % (tablename,primary_key)
+				try:
+					# Execute the SQL command
+					cursor.execute(sql_delete)
+					db.commit()
+					print 'Deleted %s' % (primary_key)
+				except:
+					# Rollback in case there is any error
+					print 'Could not delete %s ' % (primary_key)
+					db.rollback()
+	except: print "Error: unable to fecth data"
 
 
 hour = time.strftime('%X')[:2]
