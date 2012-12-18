@@ -29,7 +29,7 @@ from oauth2client.client import OAuth2WebServerFlow
 from oauth2client.tools import run
 
 
-#============= Log File name and Format
+#============= Log File name and Format ==
 today = datetime.date.today()
 logfile='Rain_Maker%s.log' % (today)
 
