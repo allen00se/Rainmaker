@@ -116,13 +116,15 @@ class DBUpdateThread(threading.Thread):
 			events = service.events().list(calendarId=self.calendar_id,maxResults=1000,orderBy='startTime',showDeleted='True',singleEvents='True',timeMax=self.end_date,timeMin=self.start_date).execute()
 			while True:
 				for event in events['items']:
-					Write_DB(db,cursor,event['summary'],event['id'],event['start']['dateTime'],event['end']['dateTime'],event['status'])
+					#Write_DB('Irrigation',db,cursor,event['summary'],event['id'],event['start']['dateTime'],event['end']['dateTime'],event['status'])
 					#print 'found start time %s' % event['end.dateTime']
 					try:
 						if event['status'] == 'confirmed':
+							Write_DB('Irrigation',db,cursor,event['summary'],event['id'],event['start']['dateTime'],event['end']['dateTime'],event['status'])
 							#confirmed_list.append(event['status'] + event['summary'] + event['id'])
 							print '>>>>> CONFIRMED Event %s with ID (%s) | Start Time = %s, End Time = %s' % (event['summary'],event['id'],event['start']['dateTime'],event['end']['dateTime'])
 						if event['status'] == 'cancelled':
+							Write_DB('CANCELLED',db,cursor,event['summary'],event['id'],event['start']['dateTime'],event['end']['dateTime'],event['status'])
 							#cancelled_list.append(event['status'] + event['summary'] + event['id'])
 							print '!     CANCELLED Event %s with ID (%s) | Start Time = %s, End Time = %s' % (event['summary'],event['id'],event['start']['dateTime'],event['end']['dateTime'])
 						#print '%s - %s - %s - %s - %s' %(event['status'],event['summary'],event['start.timeZone'],event['end'],event['id'])
@@ -154,7 +156,7 @@ class DBUpdateThread(threading.Thread):
 def Write_DB(db,cursor,event_summary,event_id,start_time,end_time,status):
 	logging.info('Found event %s for writing', event_summary)
 	#Write to DB
-	sqlinsert = "INSERT INTO Irrigation(Event_ID, Area, Start_Time, End_Time, Processed,Status) VALUES ('%s','%s', '%s', '%s', 'no', '%s' )" % (event_id, event_summary, start_time, end_time, status)
+	sqlinsert = "INSERT INTO %s(Event_ID, Area, Start_Time, End_Time, Processed,Status) VALUES ('%s','%s', '%s', '%s', 'no', '%s' )" % (table, event_id, event_summary, start_time, end_time, status)
 	logging.info('SQL insert string is: %s',sqlinsert)
 	try:
 		cursor.execute(sqlinsert)
