@@ -124,7 +124,7 @@ class DBUpdateThread(threading.Thread):
 							#confirmed_list.append(event['status'] + event['summary'] + event['id'])
 							print '>>>>> CONFIRMED Event %s with ID (%s) | Start Time = %s, End Time = %s' % (event['summary'],event['id'],event['start']['dateTime'],event['end']['dateTime'])
 						if event['status'] == 'cancelled':
-							#Write_DB('CANCELLED',db,cursor,event['summary'],event['id'],event['start']['dateTime'],event['end']['dateTime'],event['status'])
+							Write_DB('CANCELLED',db,cursor,event['summary'],event['id'],event['start']['dateTime'],event['end']['dateTime'],event['status'])
 							#cancelled_list.append(event['status'] + event['summary'] + event['id'])
 							print '!     CANCELLED Event %s with ID (%s) | Start Time = %s, End Time = %s' % (event['summary'],event['id'],event['start']['dateTime'],event['end']['dateTime'])
 						#print '%s - %s - %s - %s - %s' %(event['status'],event['summary'],event['start.timeZone'],event['end'],event['id'])
@@ -215,27 +215,30 @@ def clean_db(tablename,cursor,db):
 					db.rollback()
 	except: print "Error: unable to fecth data"
 
-
+localtime = time.localtime(time.time())
+print '%s-%s-%sT00:01:00-06:00' % (localtime.tm_year,localtime.tm_mon,localtime.tm_mday)
 hour = time.strftime('%X')[:2]
 '16:08:12 05/08/03 AEST'
 
 print hour
 var = 1
-thread1 = DBUpdateThread(calendar_ID,'2012-11-14T10:00:00-05:00','2012-11-24T10:00:00-05:00',flow)
+curr_date=build_date()
+thread1 = DBUpdateThread(calendar_ID,'%s-%s-%sT00:01:00-06:00','2012-12-24T10:00:00-05:00',flow) % (localtime.tm_year,localtime.tm_mon,localtime.tm_mday)
 thread2 = DBCleanThread(calendar_ID,'2012-11-14T10:00:00-05:00','2012-11-24T10:00:00-05:00','TESTDB',thread1)
 
 while var == 1 :  # This constructs an infinite loop
+	localtime = time.localtime(time.time())
 	if thread1.isAlive():
 		print '\ndont start thread1 as it is still running'
 	else:
 		print '\nstarting thread1'
-		thread1 = DBUpdateThread(calendar_ID,'2012-11-14T10:00:00-05:00','2012-11-24T10:00:00-05:00',flow)
+		thread1 = DBUpdateThread(calendar_ID,'%s-%s-%sT00:01:00-06:00','2012-12-24T10:00:00-05:00',flow) % (localtime.tm_year,localtime.tm_mon,localtime.tm_mday)
 		thread1.start()
 	if thread2.isAlive():
 		print '\ndont start thread2 as it is still running'
 	else:
 		print '\nstarting thread2'
-		thread2 = DBCleanThread(calendar_ID,'2012-11-14T10:00:00-05:00','2012-11-24T10:00:00-05:00','TESTDB',thread1)
+		thread2 = DBCleanThread(calendar_ID,'2012-11-14T10:00:00-05:00','2012-12-24T10:00:00-05:00','TESTDB',thread1)
 		thread2.start()
 
 	for p in '12345':
