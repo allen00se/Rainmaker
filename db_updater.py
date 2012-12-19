@@ -124,7 +124,7 @@ class DBUpdateThread(threading.Thread):
 							#confirmed_list.append(event['status'] + event['summary'] + event['id'])
 							print '>>>>> CONFIRMED Event %s with ID (%s) | Start Time = %s, End Time = %s' % (event['summary'],event['id'],event['start']['dateTime'],event['end']['dateTime'])
 						if event['status'] == 'cancelled':
-							Write_DB('CANCELLED',db,cursor,event['summary'],event['id'],event['start']['dateTime'],event['end']['dateTime'],event['status'])
+							#Write_DB('CANCELLED',db,cursor,event['summary'],event['id'],event['start']['dateTime'],event['end']['dateTime'],event['status'])
 							#cancelled_list.append(event['status'] + event['summary'] + event['id'])
 							print '!     CANCELLED Event %s with ID (%s) | Start Time = %s, End Time = %s' % (event['summary'],event['id'],event['start']['dateTime'],event['end']['dateTime'])
 						#print '%s - %s - %s - %s - %s' %(event['status'],event['summary'],event['start.timeZone'],event['end'],event['id'])
