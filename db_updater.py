@@ -222,17 +222,19 @@ hour = time.strftime('%X')[:2]
 
 print hour
 var = 1
+current_date='%s-%s-%sT00:01:00-06:00' % (localtime.tm_year,localtime.tm_mon,localtime.tm_mday)
 
-thread1 = DBUpdateThread(calendar_ID,'%s-%s-%sT00:01:00-06:00','2012-12-24T10:00:00-05:00',flow) % (localtime.tm_year,localtime.tm_mon,localtime.tm_mday)
+thread1 = DBUpdateThread(calendar_ID,current_date,'2012-12-24T10:00:00-05:00',flow)
 thread2 = DBCleanThread(calendar_ID,'2012-11-14T10:00:00-05:00','2012-11-24T10:00:00-05:00','TESTDB',thread1)
 
 while var == 1 :  # This constructs an infinite loop
 	localtime = time.localtime(time.time())
+	current_date='%s-%s-%sT00:01:00-06:00' % (localtime.tm_year,localtime.tm_mon,localtime.tm_mday)
 	if thread1.isAlive():
 		print '\ndont start thread1 as it is still running'
 	else:
 		print '\nstarting thread1'
-		thread1 = DBUpdateThread(calendar_ID,'%s-%s-%sT00:01:00-06:00','2012-12-24T10:00:00-05:00',flow) % (localtime.tm_year,localtime.tm_mon,localtime.tm_mday)
+		thread1 = DBUpdateThread(calendar_ID,current_date,'2012-12-24T10:00:00-05:00',flow)
 		thread1.start()
 	if thread2.isAlive():
 		print '\ndont start thread2 as it is still running'
