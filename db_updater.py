@@ -222,7 +222,7 @@ hour = time.strftime('%X')[:2]
 
 print hour
 var = 1
-curr_date=build_date()
+
 thread1 = DBUpdateThread(calendar_ID,'%s-%s-%sT00:01:00-06:00','2012-12-24T10:00:00-05:00',flow) % (localtime.tm_year,localtime.tm_mon,localtime.tm_mday)
 thread2 = DBCleanThread(calendar_ID,'2012-11-14T10:00:00-05:00','2012-11-24T10:00:00-05:00','TESTDB',thread1)
 
