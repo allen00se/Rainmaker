@@ -153,7 +153,7 @@ class DBUpdateThread(threading.Thread):
 		logging.debug('DB connection Closed')
 		print '! Finished Database Update'
 
-def Write_DB(db,cursor,event_summary,event_id,start_time,end_time,status):
+def Write_DB(table,db,cursor,event_summary,event_id,start_time,end_time,status):
 	logging.info('Found event %s for writing', event_summary)
 	#Write to DB
 	sqlinsert = "INSERT INTO %s(Event_ID, Area, Start_Time, End_Time, Processed,Status) VALUES ('%s','%s', '%s', '%s', 'no', '%s' )" % (table, event_id, event_summary, start_time, end_time, status)
