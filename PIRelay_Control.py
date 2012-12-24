@@ -47,9 +47,10 @@ def process_data(threadName, q):
 		if not workQueue.empty():
 			data = q.get()
 			queueLock.release()
+			time.sleep(data)
 			GPIO.output(data,False)
 			print "%s opening relay %s" % (threadName, data)
-			time.sleep(2)
+			time.sleep(1)
 			GPIO.output(data,True)
 			print "%s closing relay %s" % (threadName, data)
 		else:
