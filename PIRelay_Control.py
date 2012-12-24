@@ -84,36 +84,37 @@ for tName in threadList:
 
 # Fill the queue
 #fix full queue break
-print 'Filling Q'
-
-time.sleep(1)
-
-
-for relay in relaylist:
-	queueLock.acquire()
-	try:
-		workQueue.put(relay)
-		print 'added %s to q' % (relay)
-		time.sleep(1)
-	except:
-		print 'queue full'
-	queueLock.release()
-
-
-time.sleep(10)
-
-
-#for word in nameList:
+#print 'Filling Q'
+#for relay in relaylist:
 #	queueLock.acquire()
-#	workQueue.put(word)
+#	try:
+#		workQueue.put(relay)
+#		print 'added %s to q' % (relay)
+#		time.sleep(1)
+#	except:
+#		print 'queue full'
 #	queueLock.release()
 
-# Wait for queue to empty
-while not workQueue.empty():
-	pass
+
+#time.sleep(10)
+
+#while not workQueue.empty():
+#	pass
 
 
-#while var==1: # not workQueue.empty():
+while var==1: # not workQueue.empty():
+	print 'Filling Q'
+	for relay in relaylist:
+		queueLock.acquire()
+		try:
+			workQueue.put(relay)
+			print 'added %s to q' % (relay)
+			time.sleep(1)
+		except:
+			print 'queue full'
+		queueLock.release()
+
+	time.sleep(120)
 	#grab a list of the event_id for all the irrigation events for the next 24 hours that havent been processed (in chronological order)
 	# for loop
 		#add each event_id to the queue
