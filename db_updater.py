@@ -72,19 +72,11 @@ class DBCleanThread(threading.Thread):
 		#if self.thread1.isAlive:
 		#	self.thread1.join()
 		print '> STARTING DB Clean %s %s %s %s %s' % (self.calendar_id,self.start_date,self.end_date,self.target_DB,self.thread1)
-		#calendar_list=DateRangeQuery(self.calendar_service,self.start_date,self.end_date)
-
-		#db = MySQLdb.connect(ip_address,"testuser","test123","TESTDB" )
+		db = MySQLdb.connect(ip_address,db_user,db_pass,db_database)
 		# prepare a cursor object using cursor() method
-		#cursor = db.cursor()
-		#cursor.execute('SHOW TABLES;')
-
-		#table_list=[]
-		#for (table_name,) in cursor:
-		#	table_list.append(table_name)
-		#	print table_name
-		#	clean_db(table_name,cursor,db);
-		#db.close()
+		cursor = db.cursor()
+		clean_db('Irrigation',cursor,db);
+		db.close()
 		print '> Finished DB Clean'
 
 class DBUpdateThread(threading.Thread):
@@ -98,7 +90,7 @@ class DBUpdateThread(threading.Thread):
 	def run(self):
 		print '! STARTING Database Update %s %s %s %s' % (self.calendar_id,self.start_date,self.end_date,self.flow)
 		storage = Storage('credentials.dat')
-		credentials = storage.get()
+		credentials = storage.get()db = MySQLdb.connect(ip_address,db_user,db_pass,db_database)
 		if credentials is None or credentials.invalid:
 			credentials = run(flow, storage)
 		http = httplib2.Http()
@@ -107,7 +99,7 @@ class DBUpdateThread(threading.Thread):
 
 
 		logging.debug('Opening DB for write') # Open database connection
-		db = MySQLdb.connect(ip_address,db_user,db_pass,db_database)
+
 		logging.debug('DB open for write')
 		cursor = db.cursor() # prepare a cursor object using cursor() method
 		logging.debug('Enumerating Results for database write')
@@ -179,41 +171,18 @@ def Write_DB(table,db,cursor,event_summary,event_id,start_time,end_time,status):
 			db.rollback()
 
 def clean_db(tablename,cursor,db):
-	sql = 'SELECT * FROM CANCELLED WHERE Processed != "yes"'
-	try:
-		# Execute the SQL command
-		cursor.execute(sql)
-		# Fetch all the rows in a list of lists.
-		results = cursor.fetchall()
-		L=[]
-		for row in results:
-			pkey = row[0]
-			L.append(row[0]+tablename)
-
-		print len(L)
-		###calendar_list=DateRangeQuery(calendar_service,'2012-10-01','2012-12-30')
-		for item in L:
-			#check item against each event
-			source = item
-			signal=0
-			for item in calendar_list:
-				if item == source:
-					signal=signal+1
-					print 'matched %s and %s' % (source,item)
-			if signal < 1:
-				primary_key=source.replace(tablename,"");
-				print '%s was not matched %s' % (primary_key,signal)
-				sql_delete = "DELETE FROM %s WHERE String_Time = '%s'" % (tablename,primary_key)
+	sql = 'SELECT * FROM Irrigation WHERE Status = "cancelled"'
+	sql_delete = "DELETE FROM %s WHERE Status = 'cancelled'" % (tablename)
 				try:
 					# Execute the SQL command
 					cursor.execute(sql_delete)
 					db.commit()
-					print 'Deleted %s' % (primary_key)
+					print 'Deleted cancelled entries from %s' % (tablename)
 				except:
 					# Rollback in case there is any error
-					print 'Could not delete %s ' % (primary_key)
+					print 'Could not delete cancelled entries from %s ' % (tablename)
 					db.rollback()
-	except: print "Error: unable to fecth data"
+
 
 localtime = time.localtime(time.time())
 print '%s-%s-%sT00:01:00-06:00' % (localtime.tm_year,localtime.tm_mon,localtime.tm_mday)
