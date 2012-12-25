@@ -90,7 +90,8 @@ class DBUpdateThread(threading.Thread):
 	def run(self):
 		print '! STARTING Database Update %s %s %s %s' % (self.calendar_id,self.start_date,self.end_date,self.flow)
 		storage = Storage('credentials.dat')
-		credentials = storage.get()db = MySQLdb.connect(ip_address,db_user,db_pass,db_database)
+		credentials = storage.get()
+		db = MySQLdb.connect(ip_address,db_user,db_pass,db_database)
 		if credentials is None or credentials.invalid:
 			credentials = run(flow, storage)
 		http = httplib2.Http()
@@ -193,7 +194,7 @@ print hour
 var = 1
 current_date='%s-%s-%sT00:01:00-06:00' % (localtime.tm_year,localtime.tm_mon,localtime.tm_mday)
 
-thread1 = DBUpdateThread(calendar_ID,current_date,'2012-12-24T10:00:00-05:00',flow)
+thread1 = DBUpdateThread(calendar_ID,current_date,'2012-12-31T10:00:00-05:00',flow)
 thread2 = DBCleanThread(calendar_ID,'2012-11-14T10:00:00-05:00','2012-11-24T10:00:00-05:00','TESTDB',thread1)
 
 while var == 1 :  # This constructs an infinite loop
@@ -203,7 +204,7 @@ while var == 1 :  # This constructs an infinite loop
 		print '\ndont start thread1 as it is still running'
 	else:
 		print '\nstarting thread1'
-		thread1 = DBUpdateThread(calendar_ID,current_date,'2012-12-24T10:00:00-05:00',flow)
+		thread1 = DBUpdateThread(calendar_ID,current_date,'2012-12-31T10:00:00-05:00',flow)
 		thread1.start()
 	if thread2.isAlive():
 		print '\ndont start thread2 as it is still running'
