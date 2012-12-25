@@ -87,10 +87,10 @@ def get_todays_events():
 	try:
 		cursor.execute(sql)
 		results = cursor.fetchall()
-			eventlist=[]
-			for row in results:
-				eventID = row[0]
-				eventlist.append(row[0])
+		eventlist=[]
+		for row in results:
+			eventID = row[0]
+			eventlist.append(row[0])
 	except:
 		print 'fetched nothing'
 
