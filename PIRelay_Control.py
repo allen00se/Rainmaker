@@ -88,7 +88,9 @@ def get_todays_events():
 		cursor.execute(sql)
 		results = cursor.fetchall()
 		eventlist=[]
+		print eventlist
 		for row in results:
+			print row[0]
 			eventID = row[0]
 			eventlist.append(row[0])
 	except:
