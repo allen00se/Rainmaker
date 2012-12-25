@@ -139,6 +139,7 @@ for tName in threadList:
 var = 1
 while var==1: # not workQueue.empty():
 	print 'Filling Q'
+	eventlist=get_todays_events
 	for event in eventlist:
 		queueLock.acquire()
 		try:
