@@ -53,6 +53,7 @@ class myThread (threading.Thread):
 
 def process_data(threadName, q):
 	while not exitFlag:
+	data='test'
 		queueLock.acquire()
 		if not workQueue.empty():
 			data = q.get()
