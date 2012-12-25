@@ -174,15 +174,15 @@ def Write_DB(table,db,cursor,event_summary,event_id,start_time,end_time,status):
 def clean_db(tablename,cursor,db):
 	sql = 'SELECT * FROM Irrigation WHERE Status = "cancelled"'
 	sql_delete = "DELETE FROM %s WHERE Status = 'cancelled'" % (tablename)
-				try:
-					# Execute the SQL command
-					cursor.execute(sql_delete)
-					db.commit()
-					print 'Deleted cancelled entries from %s' % (tablename)
-				except:
-					# Rollback in case there is any error
-					print 'Could not delete cancelled entries from %s ' % (tablename)
-					db.rollback()
+		try:
+			# Execute the SQL command
+			cursor.execute(sql_delete)
+			db.commit()
+			print 'Deleted cancelled entries from %s' % (tablename)
+		except:
+			# Rollback in case there is any error
+			print 'Could not delete cancelled entries from %s ' % (tablename)
+			db.rollback()
 
 
 localtime = time.localtime(time.time())
