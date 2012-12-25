@@ -44,11 +44,11 @@ class myThread (threading.Thread):
 
 	def run(self):
 		print "Starting " + self.name
-		process_data(self.name, self.q) #grab event_id from queue
-		#grab info from db using event_id
+		id_from_q=process_data(self.name, self.q) #grab event_id from queue
+		data_from_db=db_grab_info(id_from_q)#grab info from db using event_id
 		#wait until event start time
 		#open relays for event duration
-
+		print data_from_db[2]
 		print "Exiting " + self.name
 
 def process_data(threadName, q):
@@ -57,6 +57,7 @@ def process_data(threadName, q):
 		if not workQueue.empty():
 			data = q.get()
 			queueLock.release()
+			#function to get info from db
 			time.sleep(1)
 			#GPIO.output(data,False)
 			print "%s opening relay %s" % (threadName, data)
@@ -65,6 +66,7 @@ def process_data(threadName, q):
 			print "%s closing relay %s" % (threadName, data)
 		else:
 			queueLock.release()
+		return data
 		#time.sleep(3)
 
 #def activate_area(threadname,q,area,start_time,end_time):
@@ -74,9 +76,21 @@ def process_data(threadName, q):
 		#open zone relay for percentage of duration listed in ini file
 
 
-#def db_grab_info():
+def db_grab_info(eventID):
+	db = MySQLdb.connect(ip_address,db_user,db_pass,db_database)
+	cursor = db.cursor() # prepare a cursor object using cursor() method
+	sql = 'SELECT * FROM Irrigation WHERE Event_ID = "%s"' % eventID
+	try:
+		cursor.execute(sql)
+		info = cursor.fetchone()
+
+	except:
+		print 'fetched nothing'
+	db.close()
 	#use sql command to grab area,start_time,end_time
 	#return info to thread
+	return info
+
 
 def get_todays_events():
 	localtime = time.localtime(time.time())
@@ -92,7 +106,7 @@ def get_todays_events():
 		print results
 		for row in results:
 			print row[0]
-			eventID = row[0]
+			#eventID = row[0]
 			eventlist.append(row[0])
 	except:
 		print 'fetched nothing'
