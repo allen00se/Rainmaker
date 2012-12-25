@@ -83,7 +83,7 @@ def get_todays_events():
 	current_day = '%s-%s-%s' % (localtime.tm_year,localtime.tm_mon,localtime.tm_mday)
 	db = MySQLdb.connect(ip_address,db_user,db_pass,db_database) # Open database connection
 	cursor = db.cursor() # prepare a cursor object using cursor() method
-	sql = 'SELECT * FROM Irrigation WHERE Start_Time LIKE %s' % current_day
+	sql = 'SELECT * FROM Irrigation WHERE Start_Time LIKE %%%s%%' % current_day
 	try:
 		cursor.execute(sql)
 		results = cursor.fetchall()
@@ -93,6 +93,7 @@ def get_todays_events():
 			eventlist.append(row[0])
 	except:
 		print 'fetched nothing'
+
 
 	db.close()
 
@@ -116,25 +117,6 @@ for tName in threadList:
 	thread.start()
 	threads.append(thread)
 	threadID += 1
-
-# Fill the queue
-#fix full queue break
-#print 'Filling Q'
-#for relay in relaylist:
-#	queueLock.acquire()
-#	try:
-#		workQueue.put(relay)
-#		print 'added %s to q' % (relay)
-#		time.sleep(1)
-#	except:
-#		print 'queue full'
-#	queueLock.release()
-
-
-#time.sleep(10)
-
-#while not workQueue.empty():
-#	pass
 
 var = 1
 while var==1: # not workQueue.empty():
