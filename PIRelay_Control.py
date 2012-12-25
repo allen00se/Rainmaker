@@ -98,7 +98,7 @@ def get_todays_events():
 
 	for event in eventlist:
 		print event
-
+	return eventlist
 
 
 
