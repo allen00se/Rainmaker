@@ -44,11 +44,11 @@ class myThread (threading.Thread):
 
 	def run(self):
 		print "Starting " + self.name
-		id_from_q=process_data(self.name, self.q) #grab event_id from queue
-		data_from_db=db_grab_info(id_from_q)#grab info from db using event_id
+		process_data(self.name, self.q) #grab event_id from queue
+		#data_from_db=db_grab_info(id_from_q)#grab info from db using event_id
 		#wait until event start time
 		#open relays for event duration
-		print data_from_db[2]
+		#print data_from_db[2]
 		print "Exiting " + self.name
 
 def process_data(threadName, q):
@@ -59,15 +59,17 @@ def process_data(threadName, q):
 			data = q.get()
 			queueLock.release()
 			#function to get info from db
-			time.sleep(1)
+			data_from_db=db_grab_info(data)
+			print data_from_db[2]
 			#GPIO.output(data,False)
 			print "%s opening relay %s" % (threadName, data)
 			time.sleep(1)
 			#GPIO.output(data,True)
 			print "%s closing relay %s" % (threadName, data)
+			#return data_from_db
 		else:
 			queueLock.release()
-		return data
+		#return data
 		#time.sleep(3)
 
 #def activate_area(threadname,q,area,start_time,end_time):
