@@ -6,6 +6,8 @@ import RPi.GPIO as GPIO
 import Queue
 import threading
 import time
+import MySQLdb
+from ConfigParser import SafeConfigParser
 
 GPIO.setmode(GPIO.BOARD)
 GPIO.setwarnings(False)
@@ -21,6 +23,14 @@ GPIO.setup(21, GPIO.OUT)
 GPIO.setup(22, GPIO.OUT)
 GPIO.setup(23, GPIO.OUT)
 GPIO.setup(26, GPIO.OUT)
+
+parser = SafeConfigParser()
+parser.read('irrigation.ini')
+
+ip_address = parser.get('DB_Con_Info','ip')
+db_user = parser.get('DB_Con_Info','username')
+db_pass = parser.get('DB_Con_Info','password')
+db_database = parser.get('DB_Con_Info','database')
 
 exitFlag = 0
 
@@ -48,10 +58,10 @@ def process_data(threadName, q):
 			data = q.get()
 			queueLock.release()
 			time.sleep(data)
-			GPIO.output(data,False)
+			#GPIO.output(data,False)
 			print "%s opening relay %s" % (threadName, data)
 			time.sleep(1)
-			GPIO.output(data,True)
+			#GPIO.output(data,True)
 			print "%s closing relay %s" % (threadName, data)
 		else:
 			queueLock.release()
@@ -67,6 +77,31 @@ def process_data(threadName, q):
 #def db_grab_info():
 	#use sql command to grab area,start_time,end_time
 	#return info to thread
+
+def get_todays_events():
+	localtime = time.localtime(time.time())
+	current_day = '%s-%s-%s' % (localtime.tm_year,localtime.tm_mon,localtime.tm_mday)
+	db = MySQLdb.connect(ip_address,db_user,db_pass,db_database) # Open database connection
+	cursor = db.cursor() # prepare a cursor object using cursor() method
+	sql = 'SELECT * FROM Irrigation WHERE Start_Time LIKE %s' % current_day
+	try:
+		cursor.execute(sql)
+		results = cursor.fetchall()
+			eventlist=[]
+			for row in results:
+				eventID = row[0]
+				eventlist.append(row[0])
+	except:
+		print 'fetched nothing'
+
+	db.close()
+
+	for event in eventlist:
+		print event
+
+
+
+
 relaylist = [3,5,7,11,13,15,18,19,21,22,23,26]
 threadList = ["Thread-1", "Thread-2", "Thread-3","Thread-4", "Thread-5", "Thread-6"]
 nameList = ["One", "Two", "Three", "Four", "Five"]
@@ -101,14 +136,14 @@ for tName in threadList:
 #while not workQueue.empty():
 #	pass
 
-
+var = 1
 while var==1: # not workQueue.empty():
 	print 'Filling Q'
-	for relay in relaylist:
+	for event in eventlist:
 		queueLock.acquire()
 		try:
-			workQueue.put(relay)
-			print 'added %s to q' % (relay)
+			workQueue.put(event)
+			print 'added %s to q' % (event)
 			time.sleep(1)
 		except:
 			print 'queue full'
