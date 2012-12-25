@@ -83,7 +83,7 @@ def get_todays_events():
 	current_day = '%s-%s-%s' % (localtime.tm_year,localtime.tm_mon,localtime.tm_mday)
 	db = MySQLdb.connect(ip_address,db_user,db_pass,db_database) # Open database connection
 	cursor = db.cursor() # prepare a cursor object using cursor() method
-	sql = 'SELECT * FROM Irrigation' # WHERE Start_Time LIKE "%%%s%%"' % current_day
+	sql = 'SELECT * FROM Irrigation WHERE Start_Time LIKE "%%2012-12%%"' # % current_day
 	try:
 		cursor.execute(sql)
 		results = cursor.fetchall()
