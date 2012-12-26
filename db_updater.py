@@ -164,7 +164,8 @@ def Write_DB(table,db,cursor,event_summary,event_id,start_time,end_time,status):
 			db.rollback()
 
 def clean_db(tablename,cursor,db):
-	sql = 'SELECT * FROM Irrigation WHERE Status = "cancelled"'
+	logging.debug('Cleaning table %s',tablename)
+	#sql = 'SELECT * FROM Irrigation WHERE Status = "cancelled"'
 	sql_delete = "DELETE FROM %s WHERE Status = 'cancelled'" % (tablename)
 	try:
 		# Execute the SQL command
