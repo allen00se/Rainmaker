@@ -109,6 +109,7 @@ class DBUpdateThread(threading.Thread):
 							Write_DB('Irrigation',db,cursor,event['summary'],event['id'],event['start']['dateTime'],event['end']['dateTime'],event['status'])
 							logging.debug('Confirmed Event %s with ID (%s) | Start Time = %s, End Time = %s',event['summary'],event['id'],event['start']['dateTime'],event['end']['dateTime'])
 						if event['status'] == 'cancelled':
+							#check if eventID exists in Irrigation, if so delete...
 							Write_DB('CANCELLED',db,cursor,event['summary'],event['id'],event['start']['dateTime'],event['end']['dateTime'],event['status'])
 							logging.debug('Cancelled Event %s with ID (%s) | Start Time = %s, End Time = %s',event['summary'],event['id'],event['start']['dateTime'],event['end']['dateTime'])
 					except KeyError:
@@ -153,7 +154,7 @@ def Write_DB(table,db,cursor,event_summary,event_id,start_time,end_time,status):
 		if e.args[0]==1062:
 			logging.warning('Warning %d: %s',e.args[0], e.args[1])
 			logging.debug('Record already exists, updating existing record!')
-			sqlupdate = "UPDATE %s SET Start_Time = '%s', End_Time = '%s', Status = '%s' WHERE Event_ID = '%s'" % (event_summary, start_time, end_time,status, event_id)
+			sqlupdate = "UPDATE %s SET Start_Time = '%s', End_Time = '%s', Status = '%s' WHERE Event_ID = '%s'" % (table, start_time, end_time,status, event_id)
 			logging.debug('Updating record with SQL command: %s',sqlupdate)
 			cursor.execute(sqlupdate)
 			db.commit()
