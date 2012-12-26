@@ -83,7 +83,7 @@ class DBUpdateThread(threading.Thread):
 		self.flow=flow
 
 	def run(self):
-		logging.info('Starting Database Update %s %s %s %s') % (self.calendar_id,self.start_date,self.end_date,self.flow)
+		logging.info('Starting Database Update %s %s %s %s',self.calendar_id,self.start_date,self.end_date,self.flow)
 		storage = Storage('credentials.dat')
 		credentials = storage.get()
 		logging.debug('Connecting to %s database, with %s @ %s at IP: %s',db_database,db_user,db_pass,ip_address)
@@ -173,7 +173,7 @@ def clean_db(tablename,cursor,db):
 		logging.debug('Deleted cancelled entries from %s') % (tablename)
 	except:
 		# Rollback in case there is any error
-		logging.debug('Could not delete cancelled entries from %s') % (tablename)
+		logging.debug('Could not delete cancelled entries from %s',tablename)
 		db.rollback()
 
 
