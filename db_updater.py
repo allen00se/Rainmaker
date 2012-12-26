@@ -107,10 +107,10 @@ class DBUpdateThread(threading.Thread):
 					try:
 						if event['status'] == 'confirmed':
 							Write_DB('Irrigation',db,cursor,event['summary'],event['id'],event['start']['dateTime'],event['end']['dateTime'],event['status'])
-							logging.debug('Confirmed Event %s with ID (%s) | Start Time = %s, End Time = %s') % (event['summary'],event['id'],event['start']['dateTime'],event['end']['dateTime'])
+							logging.debug('Confirmed Event %s with ID (%s) | Start Time = %s, End Time = %s',event['summary'],event['id'],event['start']['dateTime'],event['end']['dateTime'])
 						if event['status'] == 'cancelled':
 							Write_DB('CANCELLED',db,cursor,event['summary'],event['id'],event['start']['dateTime'],event['end']['dateTime'],event['status'])
-							logging.debug('Cancelled Event %s with ID (%s) | Start Time = %s, End Time = %s') % (event['summary'],event['id'],event['start']['dateTime'],event['end']['dateTime'])
+							logging.debug('Cancelled Event %s with ID (%s) | Start Time = %s, End Time = %s',event['summary'],event['id'],event['start']['dateTime'],event['end']['dateTime'])
 					except KeyError:
 						logging.info('Key Error Exception, check logfile for details')
 						print 'No Summary'
