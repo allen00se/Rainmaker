@@ -1,4 +1,13 @@
 #!/bin/bash
+### BEGIN INIT INFO
+# Provides:          scriptname
+# Required-Start:    $remote_fs $syslog
+# Required-Stop:     $remote_fs $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start daemon at boot time
+# Description:       Enable service provided by daemon.
+### END INIT INFO
 # RainMaker daemon
 # chkconfig: 345 20 80
 # description: RainMaker daemon
@@ -6,7 +15,7 @@
 
 DAEMON_PATH="/home/krys/Rainmaker_dev/Rainmaker"
 
-DAEMON=dbupdater.py
+DAEMON=db_updater.py
 DAEMONOPTS=""
 
 NAME=RainMaker
