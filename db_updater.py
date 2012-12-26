@@ -171,7 +171,7 @@ def clean_db(tablename,cursor,db):
 		# Execute the SQL command
 		cursor.execute(sql_delete)
 		db.commit()
-		logging.debug('Deleted cancelled entries from %s') % (tablename)
+		logging.debug('Deleted cancelled entries from %s',tablename)
 	except:
 		# Rollback in case there is any error
 		logging.debug('Could not delete cancelled entries from %s',tablename)
