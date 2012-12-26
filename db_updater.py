@@ -188,6 +188,7 @@ thread1 = DBUpdateThread(calendar_ID,current_date,'2012-12-31T10:00:00-05:00',fl
 thread2 = DBCleanThread(calendar_ID,'2012-11-14T10:00:00-05:00','2012-11-24T10:00:00-05:00','TESTDB',thread1)
 
 while var == 1 :  # This constructs an infinite loop
+	logfile='Rain_Maker%s.log' % (today)
 	localtime = time.localtime(time.time())
 	current_date='%s-%s-%sT00:01:00-06:00' % (localtime.tm_year,localtime.tm_mon,localtime.tm_mday)
 	if thread1.isAlive():
